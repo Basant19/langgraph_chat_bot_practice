@@ -22,11 +22,12 @@ if user_input:
     with st.chat_message ('user'):#creates the box with emoji and emoji will be based on   ( whose message is this user or assistant )
         st.text (user_input)
     
-        response = workflow.invoke(
-        {"messages": [HumanMessage(content=user_input)]},
-        config=config)
-    ai_message=response["messages"][-1].content
+    with st.chat_message ('assistant'):
+        ai_message= st.write_stream(
+        message_chunk.content for message_chunk,meta_data in  workflow.stream(
+            {'messages':[HumanMessage(user_input)]},
+            config={'configurable':{'thread_id':'thread_id_1'}},
+            stream_mode='messages'
+        ))
+    
     st.session_state['message_history'].append ({'role':'assistant','content':ai_message})
-    with st.chat_message ('assistant'):#creates the box with emoji and emoji will be based on   ( whose message is this user or assistant )
-        st.text (ai_message)# text in the above box
-
