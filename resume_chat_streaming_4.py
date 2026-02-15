@@ -14,9 +14,23 @@ def generate_thread_id():
 #utiltiy function for new chat button which on click generate a new thread id and remove message from the window 
 def reset_chat ():
     thread_id=generate_thread_id()
+    add_thread(st.session_state['thread_id'])
     st.session_state['thread_id']=thread_id
     st.session_state['message_history']=[] #to clean the message history to clean the window 
 
+#to add previous chat history in side bar append thread to chat_threads
+def add_thread(thread_id):
+    if thread_id not in st.session_state['chat_threads']:
+        st.session_state['chat_threads'].append (thread_id)
+
+#use get_state() of langraph to extract message of  thread id  
+def add_thread(thread_id):
+    if thread_id not in st.session_state['chat_threads']:
+        st.session_state['chat_threads'].append (thread_id)
+
+#load message on the window
+def load_conversation(thread_id):
+    return workflow.get_state(config={'configurable':{'thread_id':thread_id}}).values['messages']
 
 #----------adding session ---------------------------------------------------------------------------------------------------------------
 
@@ -27,17 +41,38 @@ if 'message_history' not in st.session_state:
 if 'thread_id' not in st.session_state:
     st.session_state['thread_id']=generate_thread_id()
 
+if 'chat_threads' not in st.session_state:
+    st.session_state['chat_threads']=[]
 
+add_thread(st.session_state['thread_id'])
 
-
-#------------adding side bar------------------------------------------------------------------------------------------------------------
+#------------adding side bar----------------------------------------------------------------------------------------------------------------------
 st.sidebar.title('Langgraph chatbot')
 
 if st.sidebar.button('New Chat'):
     reset_chat()
 
 st.sidebar.header ('My conversation')
-st.sidebar.text (st.session_state['thread_id'])
+for thread_id in st.session_state['chat_threads']:#to reverse [::-1] the order of chat
+   if  st.sidebar.button (str (thread_id)):
+       
+       st.session_state['thread_id']=thread_id
+       messages=load_conversation(thread_id)
+    
+        #to match our format message_history=[] dictionary we need to make changes in the format 
+        #[{'role':'user','content':'Hi'}]
+       temp_message=[]
+       for message in messages :
+           
+           if isinstance(message,HumanMessage):
+               role='user'
+           else:
+               role='assistant'
+            
+           temp_message.append({'role':role,'content':message.content})
+       st.session_state['message_history']=temp_message
+               
+
 
 #------------------------------adding older message in window --------------------------------------------------------------------------------------
 #message_history=[]  if we just use message_history and not not use session state whole code will  re-run whenever we press enter 
