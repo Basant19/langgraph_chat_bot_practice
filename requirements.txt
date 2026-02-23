@@ -65,3 +65,5 @@ langgraph-cli[inmem]
 langchain-mcp-adapters
 mcp
 langgraph-checkpoint-sqlite 
+
+ddgs
