@@ -1,10 +1,11 @@
 from dotenv import load_dotenv
 import os 
 load_dotenv()
-
+GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
 ALPHAVANTAGE_API_KEY=os.getenv('ALPHAVANTAGE_API_KEY')
 TAVILY_API_KEY=os.getenv('TAVILY_API_KEY')
 WEATHERSTACK_API_KEY=os.getenv('WEATHERSTACK_API_KEY')
 print(ALPHAVANTAGE_API_KEY)
 print(TAVILY_API_KEY)
 print(WEATHERSTACK_API_KEY)
+print (GOOGLE_API_KEY)
